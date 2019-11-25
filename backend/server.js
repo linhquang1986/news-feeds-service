@@ -1,13 +1,18 @@
-var express = require("express")
-var app = express()
-var db = require("./database.js")
-var fetch = require('node-fetch')
+const express = require("express")
+const app = express()
+const db = require("./database.js")
+const fetch = require('node-fetch')
+const cors = require('cors');
 
-var bodyParser = require("body-parser");
+const bodyParser = require("body-parser");
+app.use(cors({
+    origin: 'http://localhost:3000',
+    credentials: true
+}));
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 
-var HTTP_PORT = 8000
+const HTTP_PORT = 8000
 
 // Start server
 app.listen(HTTP_PORT, () => {
@@ -73,8 +78,8 @@ app.post("/api/articles/", (req, res, next) => {
     }
     pizzaSource().then(data => {
         data.map(item => {
-            var sql = 'INSERT INTO articles (author, title, description, url, urlToImage, publishedAt, content, sourceID, sourceName) VALUES (?,?,?,?,?,?,?,?,?)'
-            var params = [item.author, item.title, item.description, item.url, item.urlToImage, item.publishedAt, item.content, item.sourceID, item.sourceName]
+            var sql = 'INSERT INTO articles (author, title, description, url, urlToImage, publishedAt, content, sourceID, sourceName, isDel) VALUES (?,?,?,?,?,?,?,?,?, 1)'
+            var params = [item.author, item.title, item.description, item.url, item.urlToImage, item.publishedAt, item.content, item.source.id, item.source.name]
             db.run(sql, params, function (err, result) {
                 if (err) {
                     res.status(400).json({ "error": err.message })
@@ -115,6 +120,17 @@ app.patch("/api/articles/:id", (req, res, next) => {
         });
 })
 
+app.delete("/api/articles/", (req, res, next) => {
+    var sql = 'DELETE FROM articles'
+    var params = []
+    db.run(sql, params, (err, rs) => {
+        if (err) {
+            res.status(400).json({ "error": res.message })
+            return;
+        }
+        res.json({ "message": "deleted all"})
+    });
+})
 
 app.delete("/api/article/:id", (req, res, next) => {
     db.run(
