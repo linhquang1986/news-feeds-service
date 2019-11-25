@@ -27,10 +27,8 @@ let db = new sqlite3.Database(DBSOURCE, (err) => {
             // Table already created
         } else{
             // Table just created, creating some rows
-            var insert = 'INSERT INTO articles (author, title, description, url, urlToImage, publishedAt, content, sourceID, sourceName)'
-                       += 'VALUES (?,?,?,?,?,?,?,?,?)'
-            db.run(insert, ["admin","admin@example.com",md5("admin123456")])
-            db.run(insert, ["user","user@example.com",md5("user123456")])
+            var insert = 'INSERT INTO articles (author, title, description, url, urlToImage, publishedAt, content, sourceID, sourceName) VALUES (?,?,?,?,?,?,?,?,?)'
+            db.run(insert, ["Anatol Antonovici","ss", "ss","ss", "ss", "ss","ss", "ssss","quang"])
         }
     })  
     }

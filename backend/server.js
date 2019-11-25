@@ -1,9 +1,7 @@
 var express = require("express")
 var app = express()
-//var db = require("./database.js")
+var db = require("./database.js")
 var fetch = require('node-fetch')
-var async = require("async");
-var md5 = require("md5")
 
 var bodyParser = require("body-parser");
 app.use(bodyParser.urlencoded({ extended: false }));
@@ -24,49 +22,32 @@ IfoundData = (newSource) => {
         cache: "no-cache",
         credentials: "same-origin",
         headers: { "Content-Type": "application/json" }
-        }).then(res => {
-            return res.json();
-        }).catch(res => {
-            console.log("Exception : ", res);
-        })
+    }).then(res => {
+        return res.json();
+    }).then(res => {
+        return res.articles;
+    }).catch(res => {
+        console.log("Exception : ", res);
+    })
 }
-insertNewsDB = () => {
 
-}
-app.post("/api/articles", (req, res, next) => {
-    let newSource = "5dc01bc8310000b288be3e37";
-    if (req.body.newSource) {
-        newSource = req.body.newSource;
-    }
-    let pizzaSource = async() => {
-        let data = await IfoundData(newSource);
-        return data;
-    }
-    pizzaSource().then(data => {
+app.get("/api/articles", (req, res, next) => {
+    var sql = "select * from articles"
+    var params = []
+    db.all(sql, params, (err, rows) => {
+        if (err) {
+            res.status(400).json({ "error": err.message });
+            return;
+        }
         res.json({
             "message": "success",
-            "data": data
+            "data": rows
         })
-    })
- 
+    });
 });
-// app.get("/api/articles", (req, res, next) => {
-//     var sql = "select * from articles"
-//     var params = []
-//     db.all(sql, params, (err, rows) => {
-//         if (err) {
-//           res.status(400).json({"error":err.message});
-//           return;
-//         }
-//         res.json({
-//             "message":"success",
-//             "data":rows
-//         })
-//       });
-// });
 
 
-app.get("/api/article/:id", (req, res, next) => {
+app.get("/api/articles/:id", (req, res, next) => {
     var sql = "select * from article where id = ?"
     var params = [req.params.id]
     db.get(sql, params, (err, row) => {
@@ -81,53 +62,39 @@ app.get("/api/article/:id", (req, res, next) => {
     });
 });
 
-
-app.post("/api/article/", (req, res, next) => {
-    var errors = []
-    if (!req.body.password) {
-        errors.push("No password specified");
+app.post("/api/articles/", (req, res, next) => {
+    let newSource = "5dc01bc8310000b288be3e37";
+    if (req.body.newSource) {
+        newSource = req.body.newSource;
     }
-    if (!req.body.email) {
-        errors.push("No email specified");
+    let pizzaSource = async () => {
+        let data = await IfoundData(newSource);
+        return data;
     }
-    if (errors.length) {
-        res.status(400).json({ "error": errors.join(",") });
-        return;
-    }
-    var data = {
-        author: req.body.author,
-        title: req.body.title,
-        description: req.body.description,
-        url: req.body.url,
-        urlToImage: req.body.urlToImage,
-        publishedAt: req.body.publishedAt,
-        content: req.body.content,
-        sourceID: req.body.sourceID,
-        sourceName: req.body.sourceName
-    }
-    var sql = 'INSERT INTO articles (author, title, description, url, urlToImage, publishedAt, content, sourceID, sourceName) \n'
-    'VALUES (?,?,?,?,?,?,?,?,?)'
-    var params = [data.author, data.title, data.description, data.url, data.urlToImage, data.publishedAt, data.content, data.sourceID, data.sourceName]
-    db.run(sql, params, function (err, result) {
-        if (err) {
-            res.status(400).json({ "error": err.message })
-            return;
-        }
+    pizzaSource().then(data => {
+        data.map(item => {
+            var sql = 'INSERT INTO articles (author, title, description, url, urlToImage, publishedAt, content, sourceID, sourceName) VALUES (?,?,?,?,?,?,?,?,?)'
+            var params = [item.author, item.title, item.description, item.url, item.urlToImage, item.publishedAt, item.content, item.sourceID, item.sourceName]
+            db.run(sql, params, function (err, result) {
+                if (err) {
+                    res.status(400).json({ "error": err.message })
+                    return;
+                }
+            });
+        })
         res.json({
             "message": "success",
-            "data": data,
             "id": this.lastID
         })
-    });
+    })
 })
 
 
 
-app.patch("/api/article/:id", (req, res, next) => {
+app.patch("/api/articles/:id", (req, res, next) => {
     var data = {
         name: req.body.name,
-        email: req.body.email,
-        password: req.body.password ? md5(req.body.password) : undefined
+        email: req.body.email
     }
     db.run(
         `UPDATE article set 
