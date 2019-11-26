@@ -14,7 +14,7 @@ let db = new sqlite3.Database(DBSOURCE, (err) => {
             author text, 
             title text, 
             description text,
-            url text, 
+            url text UNIQUE, 
             urlToImage text, 
             publishedAt text, 
             content text,
