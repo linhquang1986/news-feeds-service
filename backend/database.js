@@ -1,6 +1,4 @@
 var sqlite3 = require('sqlite3').verbose()
-var md5 = require('md5')
-
 const DBSOURCE = "db.sqlite" 
 
 
@@ -9,7 +7,7 @@ let db = new sqlite3.Database(DBSOURCE, (err) => {
       // Cannot open database
       console.error(err.message)
       throw err
-    }else{
+    } else{
         console.log('Connected to the SQlite database.')
         db.run(`CREATE TABLE articles (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -30,7 +28,5 @@ let db = new sqlite3.Database(DBSOURCE, (err) => {
     })  
     }
 })
-
-
 module.exports = db
 
