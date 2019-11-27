@@ -127,6 +127,7 @@ app.post("/api/articles/", (req, res, next) => {
     let newSource = "http://www.mocky.io/v2/5dc01bc8310000b288be3e37";
     if (req.body.newSource) {
         newSource = req.body.newSource;
+        console.log(newSource)
     }
     let pizzaSource = async () => {
         let data = await IfoundData(newSource);
