@@ -60,11 +60,14 @@ function SearchAppBar({ ...props }) {
 
   const [open, setOpen] = React.useState(false);
   const state = {
-    txtSource: ""
+    txtSource: "",
+    txtAuthor: null,
+    txtSourceName:  null
   };
   const [age, setAge, source] = React.useState("");
-  const handleChange = event => {
+  const handleAuthorChange = event => {
     setAge(event.target.value);
+    state.txtAuthor = event.target.value;
   };
   const handleChangeInput = event => {
     state.txtSource = event.target.value;
@@ -77,7 +80,9 @@ function SearchAppBar({ ...props }) {
   const handleClose = () => {
     setOpen(false);
   };
-
+  const fiterClick = (author, sourceName) => {
+    props.funcFilter(author, sourceName);
+  };
   const addNewsClick = linkSource => {
     props.funcAdd(linkSource);
     handleClose();
@@ -134,7 +139,7 @@ function SearchAppBar({ ...props }) {
                 labelId="author-filter"
                 id="authorFilter"
                 value={age}
-                onChange={handleChange}
+                onChange={handleAuthorChange}
               >
                 {authorArr.map((item, i) => (
                   <MenuItem key={i} value={item.author}>
@@ -158,6 +163,13 @@ function SearchAppBar({ ...props }) {
                 ))}
               </Select>
             </FormControl>
+            <Button
+              variant="outlined"
+              color="primary"
+              onClick={() => handleFilterClick(state.txtSource)}
+            >
+              filter
+            </Button>
           </div>
         </Toolbar>
       </AppBar>
@@ -195,6 +207,21 @@ class App extends Component {
       .delete(`http://localhost:8000/api/article/${idNews}`)
       .then(res => {
         const articles = this.state.articles.filter(item => item.id !== idNews);
+        this.setState({ articles });
+      })
+      .catch(error => console.log(error));
+  };
+
+  // handle filter by author or source
+  handleFilterClick = (_author, _sourceName) => {
+    axios
+      .post(
+        "http://localhost:8000/api/getNewByAuthorAndSource",
+        qs.stringify({ author: _author, sourceName: _sourceName }),
+        { headers: { "Content-Type": "application/x-www-form-urlencoded" } }
+      )
+      .then(res => {
+        let articles = res.data.data;
         this.setState({ articles });
       })
       .catch(error => console.log(error));
@@ -240,6 +267,7 @@ class App extends Component {
           authorArr={author}
           sourceArr={source}
           funcAdd={this.handleAddNewsClick}
+          funcFilter={this.handleFilterClick}
         />
         <div style={{ padding: 10 }}></div>
         <News
