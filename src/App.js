@@ -62,12 +62,17 @@ function SearchAppBar({ ...props }) {
   const state = {
     txtSource: "",
     txtAuthor: null,
-    txtSourceName:  null
+    txtSourceName: null
   };
-  const [age, setAge, source] = React.useState("");
+  const [author, setAuthor, sourceName, source] = React.useState("");
+
+  const handleSourceChange = event => {
+    state.txtSourceName = event.target.value;
+  };
+
   const handleAuthorChange = event => {
-    setAge(event.target.value);
     state.txtAuthor = event.target.value;
+    setAuthor(event.target.value);
   };
   const handleChangeInput = event => {
     state.txtSource = event.target.value;
@@ -80,8 +85,8 @@ function SearchAppBar({ ...props }) {
   const handleClose = () => {
     setOpen(false);
   };
-  const fiterClick = (author, sourceName) => {
-    props.funcFilter(author, sourceName);
+  const fiterClick = () => {
+    props.funcFilter(state.txtAuthor, state.txtSourceName);
   };
   const addNewsClick = linkSource => {
     props.funcAdd(linkSource);
@@ -109,7 +114,7 @@ function SearchAppBar({ ...props }) {
             closeAfterTransition
           >
             <div className={classes.paper}>
-              <h2 id="transition-modal-title">Add news modal</h2>
+              <h2 id="transition-modal-title">Add news</h2>
               <form>
                 <TextField
                   id="txtSource"
@@ -120,7 +125,8 @@ function SearchAppBar({ ...props }) {
                 />
                 &nbsp;
                 <Button
-                  variant="outlined"
+                  variant="contained"
+                  size="large"
                   color="primary"
                   onClick={() => addNewsClick(state.txtSource)}
                 >
@@ -134,11 +140,26 @@ function SearchAppBar({ ...props }) {
           </Typography>
           <div style={{ color: "white" }}>
             <FormControl className={classes.formControl}>
+              <InputLabel id="source-filter">Source filter</InputLabel>
+              <Select
+                labelId="source-filter"
+                id="sourceFilter"
+                value={sourceName}
+                onChange={handleSourceChange}
+              >
+                {sourceArr.map((item, i) => (
+                  <MenuItem key={i} value={item.sourceName}>
+                    {item.sourceName}
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
+            <FormControl className={classes.formControl}>
               <InputLabel id="author-filter">Author filter</InputLabel>
               <Select
                 labelId="author-filter"
                 id="authorFilter"
-                value={age}
+                value={author}
                 onChange={handleAuthorChange}
               >
                 {authorArr.map((item, i) => (
@@ -148,27 +169,13 @@ function SearchAppBar({ ...props }) {
                 ))}
               </Select>
             </FormControl>
-            <FormControl className={classes.formControl}>
-              <InputLabel id="source-filter">Source filter</InputLabel>
-              <Select
-                labelId="source-filter"
-                id="sourceFilter"
-                value={age}
-                onChange={handleChange}
-              >
-                {sourceArr.map((item, i) => (
-                  <MenuItem key={i} value={item.sourceName}>
-                    {item.sourceName}
-                  </MenuItem>
-                ))}
-              </Select>
-            </FormControl>
             <Button
-              variant="outlined"
+              variant="contained"
+              size="large"
               color="primary"
-              onClick={() => handleFilterClick(state.txtSource)}
+              onClick={() => fiterClick()}
             >
-              filter
+              Filter
             </Button>
           </div>
         </Toolbar>
@@ -197,6 +204,8 @@ class App extends Component {
       )
       .then(res => {
         this.loadNews();
+        this.loadAuthor();
+        this.loadSource();
       })
       .catch(error => console.log(error));
   };
