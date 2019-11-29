@@ -5,11 +5,8 @@
 /.pnp
 .pnp.js
 
-# testing
-/coverage
-
-# production
-/build
+# package
+package-lock.json
 
 # misc
 .DS_Store
