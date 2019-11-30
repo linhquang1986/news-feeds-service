@@ -1,9 +1,13 @@
 let os = require('os');
 let fs = require('fs');
+
 let open = require('open');
 let cluster = require('cluster')
 let Worker = require('./clusterWorker')
 let type = 'cluster'
+
+//const db = require("./database.js");
+//var m = require('./model');
 
 class Cluster {
     constructor() {
@@ -11,7 +15,14 @@ class Cluster {
             process.title = 'node ' + type + ' master'
             //setInterval(this.write, 5000)
             this.fork();
-            open('http://localhost:8000');
+            // m.models.post.findAll({
+            //     order: 'createdAt DESC'
+            // }).then(function(result){	
+            //     res.send(result);
+            // }, function(err){
+            //     console.log(err);
+            // });
+            open('http://localhost:8000/api');
         }
         else {
             new Worker();
