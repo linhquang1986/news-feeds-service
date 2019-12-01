@@ -1,5 +1,6 @@
 const express = require('express');
-const ctrl = require('../ctrls/pizza.ctrl');
+
+const ctrl = require('../controllers/pizza.ctrl');
 const router = express.Router();
 
 // un protected route
@@ -10,20 +11,17 @@ router.get("/getAuthor", ctrl.getAuthor);
 router.get("/getSource", ctrl.getSource);
 
 // get news by author and source
-router.get("/getNewByAuthorAndSource", ctrl.getNewByAuthorAndSource);
+router.post("/getNewByAuthorAndSource", ctrl.getNewByAuthorAndSource);
 
 // Get all data of articles table
 router.get("/articles", ctrl.getArticles);
 
 router.get("/articles/:id", ctrl.getArticleById);
 
-// Read data from Pizza API and insert all into sqlite
-router.post("/articles/", ctrl.postArticles);
-
 // Delete all data
 router.delete("/articles/", ctrl.deleteAll);
 
 // Set isDel = 0 when delete by id
-router.delete("/article/:id", ctrl.deleteByID);
+router.delete("/articles/:id", ctrl.deleteByID);
 
 module.exports = router;

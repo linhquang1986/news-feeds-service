@@ -6,22 +6,12 @@ let cluster = require('cluster')
 let Worker = require('./clusterWorker')
 let type = 'cluster'
 
-//const db = require("./database.js");
-//var m = require('./model');
-
 class Cluster {
     constructor() {
         if (cluster.isMaster) {
             process.title = 'node ' + type + ' master'
             //setInterval(this.write, 5000)
             this.fork();
-            // m.models.post.findAll({
-            //     order: 'createdAt DESC'
-            // }).then(function(result){	
-            //     res.send(result);
-            // }, function(err){
-            //     console.log(err);
-            // });
             open('http://localhost:8000/api');
         }
         else {

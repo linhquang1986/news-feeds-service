@@ -1,8 +1,7 @@
 {
     "development": {
-        "database": "pizza",
-        "host": "127.0.0.1",
-        "dialect": "sqlite"
+        "dialect": "sqlite",
+        "storage": "./db.development.sqlite"
     },
     "production": {
         "username": "",

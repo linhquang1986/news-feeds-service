@@ -1,12 +1,10 @@
 let fs = require('fs');
-let http = require('http');
 
 let type = 'cluster'
 let id;
 
 const express = require("express");
 const app = express();
-const fetch = require('node-fetch');
 const cors = require('cors');
 const bodyParser = require("body-parser");
 
@@ -14,7 +12,6 @@ const routes = require('./api/routes');
 
 class Worker {
   constructor () {
-    //this.db = db;
     id = Number(process.env.id)
     process.title = 'node '+ type +' worker '+ id
     this.webserver()
@@ -33,7 +30,8 @@ class Worker {
     }));
     app.use(bodyParser.urlencoded({ extended: false }));
     app.use(bodyParser.json());
-    
+     // mount api routes
+    app.use('/api', routes); 
     const HTTP_PORT = 8000
     
     // Start server
@@ -41,8 +39,7 @@ class Worker {
         console.log('Worker', id, "listening on port %PORT%".replace("%PORT%", HTTP_PORT));
     });
 
-    // mount api routes
-    app.use('/api', routes); 
+   
   }
 }
 
