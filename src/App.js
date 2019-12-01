@@ -198,7 +198,7 @@ class App extends Component {
   handleAddNewsClick = linkSource => {
     axios
       .post(
-        "http://localhost:8000/api/articles/",
+        "http://localhost:8000/api/pizza/articles/",
         qs.stringify({ newSource: linkSource }),
         { headers: { "Content-Type": "application/x-www-form-urlencoded" } }
       )
@@ -213,7 +213,7 @@ class App extends Component {
   // delete news by id
   handleRemoveClick = idNews => {
     axios
-      .delete(`http://localhost:8000/api/article/${idNews}`)
+      .delete(`http://localhost:8000/api/pizza/articles/${idNews}`)
       .then(res => {
         const articles = this.state.articles.filter(item => item.id !== idNews);
         this.setState({ articles });
@@ -225,7 +225,7 @@ class App extends Component {
   handleFilterClick = (_author, _sourceName) => {
     axios
       .post(
-        "http://localhost:8000/api/getNewByAuthorAndSource",
+        "http://localhost:8000/api/pizza/getNewByAuthorAndSource",
         qs.stringify({ author: _author, sourceName: _sourceName }),
         { headers: { "Content-Type": "application/x-www-form-urlencoded" } }
       )
@@ -238,7 +238,7 @@ class App extends Component {
 
   loadAuthor = () => {
     axios
-      .get("http://localhost:8000/api/getAuthor")
+      .get("http://localhost:8000/api/pizza/getAuthor")
       .then(res => {
         let author = res.data.data;
         this.setState({ author });
@@ -247,7 +247,7 @@ class App extends Component {
   };
   loadSource = () => {
     axios
-      .get("http://localhost:8000/api/getSource")
+      .get("http://localhost:8000/api/pizza/getSource")
       .then(res => {
         let source = res.data.data;
         this.setState({ source });
@@ -256,7 +256,7 @@ class App extends Component {
   };
   loadNews = () => {
     axios
-      .get("http://localhost:8000/api/articles/")
+      .get("http://localhost:8000/api/pizza/articles/")
       .then(res => {
         let articles = res.data.data;
         this.setState({ articles });
